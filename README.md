@@ -17,4 +17,7 @@ g++ -o streaming/synchronised/streaming-client-sinc.obj ./streaming/synchronised
 ./streaming/synchronised/streaming-client-sinc.obj
 
 g++ -o streaming/synchronised/streaming-server-sinc.obj ./streaming/synchronised/streaming-server-sinc.cpp
-./streaming/synchronised/streaming-server-sinc.obj 
+./streaming/synchronised/streaming-server-sinc.obj
+
+g++ -o streaming/asynchronised/streaming-server-sinc.obj streaming/asynchronised/streaming-server-sinc.cpp
+./streaming/asynchronised/streaming-server-sinc.obj 
