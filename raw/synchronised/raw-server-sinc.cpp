@@ -2,12 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 
 int main() {
-    int listener = socket(AF_INET, SOCK_RAW,0);
+    int listener = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
     if (listener < 0) {
         perror("ERROR: incorrect socket\n");
         exit(1);
@@ -20,27 +21,21 @@ int main() {
         perror("ERROR: can't bind\n");
         exit(2);
     }
-    listen(listener, 0);
-    int server_socket;
-    char read_buffer[MESSAGE_LEN];
+    char* read_buffer;
     int bytes_read = 0;
    
     while (1) {
-        server_socket = accept(listener, NULL, NULL);
-        if(server_socket < 0){
-            perror("ERROR: can't accept");
-            exit(3);
+        read_buffer = (char*)malloc(MESSAGE_LEN * sizeof(char));
+        socklen_t address_len = sizeof(address);
+        bytes_read = recvfrom(listener, read_buffer, MESSAGE_LEN, 
+            MSG_CONFIRM, (struct sockaddr *) &address, &address_len);
+        if (bytes_read <= 0) {
+            break;
         }
-        printf("STREAMING SERVER SINC GOT MESSAGE: ");
-        while (1) {
-            bytes_read = recv(server_socket, read_buffer, MESSAGE_LEN, 0);
-            if (bytes_read <= 0) {
-                break;
-            }
-            printf("%s\n", read_buffer);
-            send(server_socket, read_buffer, bytes_read, 0);
-        }
-        close(server_socket);
+        printf("RAW SERVER SINC GOT MESSAGE: ");
+        printf("%s\n", read_buffer);
+        free(read_buffer);
     }
+    close(listener);
     return 0;
 }

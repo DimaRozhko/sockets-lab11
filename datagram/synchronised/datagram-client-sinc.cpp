@@ -23,9 +23,8 @@ int main (int argc, char* argv[]) {
     }
     char message[MESSAGE_LEN];
     strcpy(message, argc <= 1 ? "Datagram sinchronised message" : argv[1]);
-    send(socket_client, message, MESSAGE_LEN, 0);
-    char recvest[MESSAGE_LEN];
-    recv(socket_client, recvest, sizeof(MESSAGE_LEN), 0);
+    sendto(socket_client, (const char *)message, strlen(message), 
+        MSG_CONFIRM, (const struct sockaddr *) &address, sizeof(address));
     close(socket_client);
     return 0;
 }
